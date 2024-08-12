@@ -1,5 +1,7 @@
 # Simplified Blackjack Project
 
+![screenshot](src/assets/images/screenshot.png)
+
 ## Steps to run locally
 
 1. clone the repo
@@ -20,5 +22,6 @@ Some of the structure is fairly arbitrary in terms of where to put type, constan
 ### Theoretical Next Steps
 
 - There's a touch of jank in a couple of the animations that I'd love to touch up
+- Make it responsive for mobile layouts
 - I don't like the way I abstracted the Game Context from the Deck Provider and then the underlying service. There's a cleaner abstraction to be had there. A better abstraction would allow for more unit test coverage and establishing simple, dependency-injectable integration tests
 - I built the win and loss condition setup for easy extensibility, so all it would take to create real Blackjack would be adding some logic to dealer actions, betting, and a couple more conditions
