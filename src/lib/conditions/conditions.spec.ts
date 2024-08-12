@@ -1,13 +1,15 @@
+import { ConditionState } from '@/lib/conditions';
+import {
+  buildPlayerBlackjack,
+  buildStandAboveHouse,
+  buildHouseBusts,
+} from '@/lib/conditions/winConditions';
 import {
   buildHouseBlackjack,
-  buildHouseBusts,
-  buildPlayerBlackjack,
   buildPlayerBusts,
-  buildStandAboveHouse,
   buildStandBelowHouse,
   buildStandOnTie,
-  ConditionState,
-} from './conditions';
+} from './lossConditions';
 
 describe('Loss Conditions', () => {
   test('House has blackjack', () => {

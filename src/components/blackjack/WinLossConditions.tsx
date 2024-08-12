@@ -2,8 +2,10 @@ import { motion } from 'framer-motion';
 
 import { ClassName, cn } from '@/lib/utils';
 
-import { ConditionState, GameCondition } from '@/constant/conditions';
+import { ConditionState, GameCondition } from '@/lib/conditions';
 import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
+import { useMemo } from 'react';
+import { GamePhase } from '@/lib/evaluator/evaluateHand';
 
 interface ConditionItemProps {
   condition: GameCondition;
@@ -36,6 +38,16 @@ const DisplayConditions = ({
   className,
   rightJustify = false,
 }: ConditionsProps) => {
+  const { gamePhase } = useBlackjackGame();
+  const unmetConditions = useMemo(
+    () =>
+      gamePhase !== GamePhase.ACTIVE
+        ? conditions.filter(
+            (condition) => condition.getState() !== ConditionState.MET
+          )
+        : conditions,
+    [conditions]
+  );
   return (
     <div
       className={cn(
@@ -51,11 +63,9 @@ const DisplayConditions = ({
       >
         {title}
       </h3>
-      {conditions
-        .filter((condition) => condition.getState() !== ConditionState.MET)
-        .map((condition, index) => (
-          <ConditionItem key={index} condition={condition} />
-        ))}
+      {unmetConditions.map((condition, index) => (
+        <ConditionItem key={index} condition={condition} />
+      ))}
     </div>
   );
 };

@@ -4,29 +4,27 @@ import {
   useCallback,
   useContext,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
-import { Card } from '@/lib/deck/deck';
 import { DeckProvider } from '@/lib/deckProvider/deckProvider';
 import {
   buildGamePhaseEvaluator,
   GamePhase,
-  GamePhaseProps,
-} from '@/lib/evaluateHand';
+  EvaluateGamePhaseProps,
+} from '@/lib/evaluator/evaluateHand';
 
 import {
+  GameCondition,
+  buildStandBelowHouse,
   buildHouseBlackjack,
-  buildHouseBusts,
-  buildPlayerBlackjack,
+  buildStandOnTie,
   buildPlayerBusts,
   buildStandAboveHouse,
-  buildStandBelowHouse,
-  buildStandOnTie,
-  GameCondition,
-} from '@/constant/conditions';
-import { useActions } from '@/contexts/ActionsContext';
+  buildPlayerBlackjack,
+  buildHouseBusts,
+} from '@/lib/conditions';
+import { Card } from '@/lib/cards/cards.types';
 export enum HandState {
   STARTING = 'starting',
   CLEARING = 'clearing',
@@ -81,11 +79,10 @@ export const BlackjackGameProvider = ({
   children: React.ReactNode;
   deckProvider: DeckProvider;
 }) => {
-  const { addAction } = useActions();
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.INITIAL);
   const [handState, setHandState] = useState<HandState>(HandState.COMPLETE);
-  const playerCardsRef = useRef<Card[]>([]);
-  const houseCardsRef = useRef<Card[]>([]);
+  const [playerCards, setPlayerCards] = useState<Card[]>([]);
+  const [houseCards, setHouseCards] = useState<Card[]>([]);
 
   const winConditions = useMemo(() => simplifiedWinConditions, []);
   const lossConditions = useMemo(() => simplifiedLossConditions, []);
@@ -108,10 +105,7 @@ export const BlackjackGameProvider = ({
         hit();
         break;
       case HandState.WAITING_ON_PLAYER:
-        updateGamePhase({
-          playerCards: playerCardsRef.current,
-          houseCards: houseCardsRef.current,
-        });
+        updateGamePhase();
         break;
       default:
         break;
@@ -128,86 +122,77 @@ export const BlackjackGameProvider = ({
   );
 
   const updateGamePhase = useCallback(
-    (input: GamePhaseProps) => {
-      const newState = evaluator.evaluate(input);
+    (input?: EvaluateGamePhaseProps) => {
+      const newState = evaluator.evaluate(input ?? { playerCards, houseCards });
       if (newState === gamePhase) return;
       setGamePhase(newState);
     },
-    [evaluator, gamePhase]
+    [evaluator, gamePhase, playerCards, houseCards]
   );
 
   const startGame = useCallback(async () => {
-    addAction('Starting a new game');
-    // TODO: try moving gamephase set up here
-    setGamePhase(GamePhase.ACTIVE);
     if (gamePhase === GamePhase.INITIAL) {
-      addAction('Opening a brand new deck');
       await deckProvider.openDeck();
+      setGamePhase(GamePhase.ACTIVE);
       setHandState(HandState.DEALING);
       return;
     }
 
+    setGamePhase(GamePhase.ACTIVE);
     // there are already cards in hand, we need to clear them
     setHandState(HandState.CLEARING);
-  }, [addAction, deckProvider, gamePhase]);
+  }, [deckProvider, gamePhase]);
 
-  const dealCards = async () => {
-    addAction('Dealing cards');
+  const dealCards = useCallback(async () => {
     const drawnCards = await deckProvider.drawCards(4);
     const newPlayerCards = drawnCards.slice(0, 2);
     const newHouseCards = drawnCards.slice(2, 4);
-    playerCardsRef.current = newPlayerCards;
-    houseCardsRef.current = newHouseCards;
-  };
+    setPlayerCards(newPlayerCards);
+    setHouseCards(newHouseCards);
+  }, [deckProvider]);
 
   const stand = useCallback(() => {
-    addAction('Player stands');
     updateGamePhase({
-      playerCards: playerCardsRef.current,
-      houseCards: houseCardsRef.current,
+      playerCards,
+      houseCards,
       playerStands: true,
     });
-  }, [addAction, updateGamePhase]);
+  }, [updateGamePhase, playerCards, houseCards]);
 
-  const clearCards = () => {
-    console.log('Clearing cards');
-    const discardedCards = [
-      ...playerCardsRef.current,
-      ...houseCardsRef.current,
-    ];
+  const clearCards = useCallback(() => {
+    const discardedCards = [...playerCards, ...houseCards];
     deckProvider.discardCards(discardedCards);
-    playerCardsRef.current = [];
-    houseCardsRef.current = [];
-  };
+    setPlayerCards([]);
+    setHouseCards([]);
+  }, [playerCards, houseCards, deckProvider]);
 
   const hit = useCallback(async () => {
-    addAction('Player hits');
     const newCard = await deckProvider.drawCards(1);
-    addAction(`Drew a card: ${newCard[0].code}`);
-    const newPlayerCards = [...playerCardsRef.current, newCard[0]];
-    playerCardsRef.current = newPlayerCards;
-  }, [addAction, deckProvider]);
+    setPlayerCards((prev) => [...prev, newCard[0]]);
+  }, [deckProvider, setPlayerCards]);
 
   const value = useMemo(
     () => ({
-      handState,
-      setHandState,
-      startGame,
-      stand,
-      hit,
-      playerCards: playerCardsRef.current,
-      houseCards: houseCardsRef.current,
       discardPile: deckProvider.discardPile,
       gamePhase,
-      winConditions,
+      handState,
+      hit,
+      houseCards,
       lossConditions,
+      playerCards,
+      setHandState,
+      stand,
+      startGame,
+      winConditions,
     }),
     [
       deckProvider.discardPile,
       gamePhase,
       handState,
       hit,
+      houseCards,
       lossConditions,
+      playerCards,
       stand,
       startGame,
       winConditions,

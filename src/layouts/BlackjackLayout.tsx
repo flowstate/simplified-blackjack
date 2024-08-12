@@ -6,7 +6,6 @@ import * as React from 'react';
 import '@/styles/globals.css';
 
 import { siteConfig } from '@/constant/config';
-import { ActionsProvider } from '@/contexts/ActionsContext';
 
 export const frankRuhlLibre = Frank_Ruhl_Libre({
   subsets: ['latin'],
@@ -41,9 +40,7 @@ export default function BlackjackLayout({
 }) {
   return (
     <html className={`${frankRuhlLibre.variable} ${dmSans.variable}`}>
-      <body className='size-screen'>
-        <ActionsProvider>{children}</ActionsProvider>
-      </body>
+      <body className='size-screen'>{children}</body>
     </html>
   );
 }

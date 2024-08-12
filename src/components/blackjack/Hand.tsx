@@ -4,18 +4,17 @@ import {
   motion,
   Variants,
 } from 'framer-motion';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
-import { Card } from '@/lib/deck/deck';
-import { calculateHandScore } from '@/lib/helper';
 import { ClassName, cn } from '@/lib/utils';
 
-import { FullCard } from '@/components/blackjack/Cards';
+import { DisplayCard } from '@/components/blackjack/Cards';
 
 import { HandState, useBlackjackGame } from '@/contexts/BlackjackGameContext';
+import { calculateHandScore } from '@/lib/cards/helpers';
+import { GamePhase } from '@/lib/evaluator/evaluateHand';
 
 interface HandProps {
-  cards: Card[];
   isHouse?: boolean;
   className?: ClassName;
 }
@@ -23,7 +22,6 @@ interface HandProps {
 const variants: Variants = {
   dealEnter: {
     opacity: 0,
-    x: '-100%',
   },
   dealAnimate: {
     opacity: 1,
@@ -38,37 +36,31 @@ const variants: Variants = {
   exit: { x: '100%', opacity: 0 },
 };
 
-export const Hand = ({ cards, className, isHouse = false }: HandProps) => {
-  const { setHandState } = useBlackjackGame();
+export const Hand = ({ className, isHouse = false }: HandProps) => {
+  const { setHandState, playerCards, houseCards, gamePhase, handState } =
+    useBlackjackGame();
+  const cards = useMemo(() => {
+    if (gamePhase === GamePhase.INITIAL) return [];
+    return isHouse ? houseCards : playerCards;
+  }, [isHouse, playerCards, houseCards, gamePhase]);
+
   const calculatedScore = useMemo(() => calculateHandScore(cards), [cards]);
-  const scoreText = useMemo(() => {
-    const prefix = 'Score ';
-    return calculatedScore > 0 ? `${prefix}${calculatedScore}` : prefix;
-  }, [calculatedScore]);
+  const scoreText = useMemo(
+    () => (calculatedScore > 0 ? calculatedScore : null),
+    [calculatedScore]
+  );
 
-  // pass in a delay prop to the variants
-  // add a delay to all animations, add index-based delay to each card (not hitting card, just the initial deal)
-
-  const handleExitComplete = () => {
-    console.log('HAND: handleExitComplete');
-    if (isHouse) return;
+  const handleExitComplete = useCallback(() => {
+    if (isHouse || handState !== HandState.CLEARING) return;
     setTimeout(() => {
-      console.log('HAND: Setting state to dealing');
       setHandState(HandState.DEALING);
-    }, 1000);
-  };
+    }, 500);
+  }, [isHouse, setHandState, handState]);
 
   const handleAnimationComplete = (definition: string) => {
     if (!definition.toLowerCase().includes('animate')) return;
     setHandState(HandState.WAITING_ON_PLAYER);
   };
-
-  useEffect(() => {
-    console.log(
-      `${isHouse ? 'House' : 'Player'} cards:`,
-      cards.map((card) => card.code).join(', ')
-    );
-  }, [cards, isHouse]);
 
   return (
     <div
@@ -90,30 +82,38 @@ export const Hand = ({ cards, className, isHouse = false }: HandProps) => {
               animate={index > 1 ? 'hitAnimate' : 'dealAnimate'}
               exit='exit'
               transition={{
-                duration: 0.3,
+                duration: 0.2,
                 ease: 'easeInOut',
-                // layout: { duration: 0.5, ease: 'easeInOut' },
-                // x: { delay: 0.3, type: 'easeOut' },
-                // opacity: { delay: 0.3, duration: 0.2 },
+                delay: index * 0.1 + (isHouse ? 0 : 0.4),
               }}
               onAnimationComplete={(definition: AnimationDefinition) => {
                 if (isHouse || index !== cards.length - 1) return;
-                console.log('HAND: handleAnimationComplete', definition);
                 handleAnimationComplete(definition.toLocaleString());
               }}
             >
-              <FullCard card={card} />
+              <DisplayCard card={card} />
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
-      <p
-        className={cn('font-bold font-display uppercase text-3xl', {
-          'opacity-50': calculatedScore === 0,
-        })}
-      >
-        {scoreText}
-      </p>
+      <div className={cn('flex items-end', { 'text-transparent': !scoreText })}>
+        {scoreText && (
+          <p
+            className={cn('font-bold font-display text-4xl', {
+              'opacity-50': calculatedScore === 0,
+            })}
+          >
+            {scoreText}
+          </p>
+        )}
+        <p
+          className={cn('font-bold font-display text-2xl', {
+            'opacity-50': calculatedScore === 0,
+          })}
+        >
+          pts
+        </p>
+      </div>
     </div>
   );
 };

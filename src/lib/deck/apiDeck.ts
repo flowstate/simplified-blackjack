@@ -1,6 +1,6 @@
-import { Card, createCard } from '@/lib/deck/deck';
-
-import { API_ROOT } from '@/constant/cards';
+import { Card } from '@/lib/cards/cards.types';
+import { createCard } from '@/lib/cards/helpers';
+import { API_ROOT } from '@/lib/deck/constants';
 
 export const OPEN_DECK_ROUTE = `${API_ROOT}/api/deck/new/shuffle/`;
 export const OPEN_SMALL_DECK_ROUTE = `${API_ROOT}/api/deck/new/shuffle/?cards=AS,2S,KS,AD,2D,KD,AC,2C,KC,AH,2H,KH,JS,JC`;
@@ -85,6 +85,5 @@ export const returnDiscardPile = async (
     }
   );
   const data = await response.json();
-  console.log(JSON.stringify(data, null, 2));
   return { ok: data.success, remaining: data.remaining };
 };

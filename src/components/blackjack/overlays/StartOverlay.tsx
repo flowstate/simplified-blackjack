@@ -1,6 +1,10 @@
-import { ModalBody, ModalContent, useModal } from '@/components/AnimatedModal';
+import {
+  ModalBody,
+  ModalContent,
+  useModal,
+} from '@/components/blackjack/overlays/AnimatedModal';
 import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
-import { GamePhase } from '@/lib/evaluateHand';
+import { GamePhase } from '@/lib/evaluator/evaluateHand';
 import { useEffect } from 'react';
 
 export const StartOverlay = () => {

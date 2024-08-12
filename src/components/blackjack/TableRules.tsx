@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 
-import { GamePhase } from '@/lib/evaluateHand';
+import { GamePhase } from '@/lib/evaluator/evaluateHand';
 import { cn } from '@/lib/utils';
 
 import { SpadeChip } from '@/assets/icons';

@@ -1,8 +1,13 @@
-import { ModalBody, ModalContent, useModal } from '@/components/AnimatedModal';
+import {
+  ModalBody,
+  ModalContent,
+  useModal,
+} from '@/components/blackjack/overlays/AnimatedModal';
 import { ConditionItem } from '@/components/blackjack/WinLossConditions';
-import { ConditionState } from '@/constant/conditions';
+
 import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
-import { GamePhase } from '@/lib/evaluateHand';
+import { ConditionState } from '@/lib/conditions';
+import { GamePhase } from '@/lib/evaluator/evaluateHand';
 import { useEffect, useMemo } from 'react';
 
 export const WinOverlay = () => {

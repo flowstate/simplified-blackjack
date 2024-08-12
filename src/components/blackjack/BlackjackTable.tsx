@@ -14,12 +14,9 @@ import {
 } from '@/components/blackjack/WinLossConditions';
 
 import backgroundImage from '@/assets/images/felt720.png';
-import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
-import { ModalProvider } from '@/components/AnimatedModal';
+import { ModalProvider } from '@/components/blackjack/overlays/AnimatedModal';
 
 export const BlackjackTable = () => {
-  const { playerCards, houseCards } = useBlackjackGame();
-
   return (
     <main
       className={cn(
@@ -29,12 +26,12 @@ export const BlackjackTable = () => {
       <div className='w-[1440px] h-screen flex flex-col items-center py-10 z-10'>
         <section className='flex items-start flex-1 gap-10 size-full relative'>
           <LossConditions className='flex-1 mt-20' />
-          <Hand className='flex-1 mt-14' isHouse cards={houseCards} />
+          <Hand className='flex-1 mt-14' isHouse={true} />
           <WinConditions className='flex-1 mt-20' />
         </section>
         <TableRules />
         <section className='size-full flex flex-col gap-10 items-center flex-1'>
-          <Hand className='flex-1' cards={playerCards} />
+          <Hand className='flex-1' />
           <PlayerActions />
         </section>
       </div>

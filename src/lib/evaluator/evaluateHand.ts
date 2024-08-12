@@ -1,7 +1,6 @@
-import { Card } from '@/lib/deck/deck';
-import { calculateHandScore } from '@/lib/helper';
-
-import { ConditionState, GameCondition } from '@/constant/conditions';
+import { GameCondition, ConditionState } from '@/lib/conditions';
+import { Card } from '@/lib/cards/cards.types';
+import { calculateHandScore } from '@/lib/cards/helpers';
 
 // TODO: move to constants?
 export enum GamePhase {
@@ -11,14 +10,14 @@ export enum GamePhase {
   LOST = 'lost',
 }
 
-export interface GamePhaseProps {
+export interface EvaluateGamePhaseProps {
   playerCards: Card[];
   houseCards: Card[];
   playerStands?: boolean;
 }
 
 interface GamePhaseEvaluator {
-  evaluate: (props: GamePhaseProps) => GamePhase;
+  evaluate: (props: EvaluateGamePhaseProps) => GamePhase;
 }
 
 export const buildGamePhaseEvaluator = ({
@@ -32,7 +31,7 @@ export const buildGamePhaseEvaluator = ({
     playerCards,
     houseCards,
     playerStands = false,
-  }: GamePhaseProps): GamePhase => {
+  }: EvaluateGamePhaseProps): GamePhase => {
     const playerScore = calculateHandScore(playerCards);
     const houseScore = calculateHandScore(houseCards);
 

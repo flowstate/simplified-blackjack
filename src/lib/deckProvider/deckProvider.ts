@@ -1,4 +1,5 @@
-import { Card, fullDeck } from '@/lib/deck/deck';
+import { Card } from '@/lib/cards/cards.types';
+import { fullDeck } from '@/lib/deck/deck';
 
 export interface DeckProvider {
   openDeck: () => Promise<void>;
