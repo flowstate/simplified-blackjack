@@ -10,15 +10,14 @@ export const TableButton = React.forwardRef<
     <button
       ref={ref}
       className={cn(
-        'size-24 rounded-full border-2 border-foreground relative',
+        'size-24 rounded-full border-2 border-foreground relative transition-all hover:scale-110 active:scale-90 ease-in-out',
         className,
-        { 'saturate-0': disabled } // Add saturation class if disabled
+        { 'saturate-0 opacity-50 pointer-events-none': disabled }
       )}
-      disabled={disabled} // Ensure button is disabled
+      disabled={disabled}
       {...props}
     >
-      <div className='size-full bg-foreground opacity-10 rounded-full' />
-      <span className='text-foreground text-2xl font-display opacity-100 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+      <span className=' text-3xl font-display opacity-100 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-colors'>
         {children}
       </span>
     </button>

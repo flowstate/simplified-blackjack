@@ -1,5 +1,10 @@
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  AnimatePresence,
+  AnimationDefinition,
+  motion,
+  Variants,
+} from 'framer-motion';
+import { useEffect, useMemo } from 'react';
 
 import { Card } from '@/lib/deck/deck';
 import { calculateHandScore } from '@/lib/helper';
@@ -13,18 +18,29 @@ interface HandProps {
   cards: Card[];
   isHouse?: boolean;
   className?: ClassName;
-  setReadyForAction?: (ready: boolean) => void;
 }
 
-export const Hand = ({
-  setReadyForAction,
-  cards,
-  className,
-  isHouse = false,
-}: HandProps) => {
-  const { handState, setHandState } = useBlackjackGame();
+const variants: Variants = {
+  dealEnter: {
+    opacity: 0,
+    x: '-100%',
+  },
+  dealAnimate: {
+    opacity: 1,
+    x: 0,
+  },
+  hitEnter: {
+    opacity: 0,
+  },
+  hitAnimate: {
+    opacity: 1,
+  },
+  exit: { x: '100%', opacity: 0 },
+};
+
+export const Hand = ({ cards, className, isHouse = false }: HandProps) => {
+  const { setHandState } = useBlackjackGame();
   const calculatedScore = useMemo(() => calculateHandScore(cards), [cards]);
-  const [showCards, setShowCards] = useState(true);
   const scoreText = useMemo(() => {
     const prefix = 'Score ';
     return calculatedScore > 0 ? `${prefix}${calculatedScore}` : prefix;
@@ -32,34 +48,27 @@ export const Hand = ({
 
   // pass in a delay prop to the variants
   // add a delay to all animations, add index-based delay to each card (not hitting card, just the initial deal)
-  useEffect(() => {
-    if (isHouse) return;
-    // if starting hand
-    if (handState === HandState.STARTING) {
-      // if player has cards
-      if (cards.length > 0) {
-        // set state to clearing
-        setHandState(HandState.CLEARING);
-      }
-    }
-  }, [handState, cards, isHouse, setHandState]);
-
-  // clear the cards
-  // set state to dealing
-  // deal the cards
-  // set state to waiting on player
-
-  // if hitting
-  // player can't act
-  // add card to hand with variant hit
-  // on animation complete, set state to waiting on player
 
   const handleExitComplete = () => {
-    setShowCards(false);
+    console.log('HAND: handleExitComplete');
+    if (isHouse) return;
     setTimeout(() => {
-      setShowCards(true);
+      console.log('HAND: Setting state to dealing');
+      setHandState(HandState.DEALING);
     }, 1000);
   };
+
+  const handleAnimationComplete = (definition: string) => {
+    if (!definition.toLowerCase().includes('animate')) return;
+    setHandState(HandState.WAITING_ON_PLAYER);
+  };
+
+  useEffect(() => {
+    console.log(
+      `${isHouse ? 'House' : 'Player'} cards:`,
+      cards.map((card) => card.code).join(', ')
+    );
+  }, [cards, isHouse]);
 
   return (
     <div
@@ -71,27 +80,31 @@ export const Hand = ({
     >
       <div className='relative w-full justify-center flex gap-1 h-[250px]'>
         <AnimatePresence mode='wait' onExitComplete={handleExitComplete}>
-          <LayoutGroup>
-            {showCards &&
-              cards.map((card) => (
-                <motion.div
-                  key={`${isHouse ? 'house' : 'player'}-card-${card.code}`}
-                  layout
-                  layoutId={`card-${card.code}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: '100%', opacity: 0 }}
-                  transition={{
-                    layout: { duration: 0.5, ease: 'easeInOut' },
-                    opacity: { delay: 0.3, duration: 0.2 },
-                    x: { delay: 0.3, type: 'easeOut' },
-                  }}
-                  onAnimationComplete={() => setReadyForAction?.(true)}
-                >
-                  <FullCard card={card} />
-                </motion.div>
-              ))}
-          </LayoutGroup>
+          {cards.map((card, index) => (
+            <motion.div
+              key={`${isHouse ? 'house' : 'player'}-card-${card.code}`}
+              layout
+              variants={variants}
+              layoutId={`card-${card.code}`}
+              initial={index > 1 ? 'hitEnter' : 'dealEnter'}
+              animate={index > 1 ? 'hitAnimate' : 'dealAnimate'}
+              exit='exit'
+              transition={{
+                duration: 0.3,
+                ease: 'easeInOut',
+                // layout: { duration: 0.5, ease: 'easeInOut' },
+                // x: { delay: 0.3, type: 'easeOut' },
+                // opacity: { delay: 0.3, duration: 0.2 },
+              }}
+              onAnimationComplete={(definition: AnimationDefinition) => {
+                if (isHouse || index !== cards.length - 1) return;
+                console.log('HAND: handleAnimationComplete', definition);
+                handleAnimationComplete(definition.toLocaleString());
+              }}
+            >
+              <FullCard card={card} />
+            </motion.div>
+          ))}
         </AnimatePresence>
       </div>
       <p

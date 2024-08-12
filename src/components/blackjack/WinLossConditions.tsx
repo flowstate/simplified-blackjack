@@ -12,15 +12,12 @@ interface ConditionItemProps {
 
 export const ConditionItem = ({ condition, className }: ConditionItemProps) => {
   const layoutId = `condition-${condition.toString().replace(/\s+/g, '-')}`;
+
   return (
     <motion.div
       layout
       layoutId={layoutId}
-      className={cn(
-        'text-2xl',
-        { 'animate-glow': condition.getState() === ConditionState.PARTIAL },
-        className
-      )}
+      className={cn('text-2xl font-semibold text-white', className)}
     >
       {condition.toString()}
     </motion.div>
@@ -67,9 +64,9 @@ export const WinConditions = ({ className }: { className?: ClassName }) => {
   const { winConditions } = useBlackjackGame();
   return (
     <DisplayConditions
-      title='Player wins if'
+      title='to win'
       conditions={winConditions}
-      className={className}
+      className={cn('text-primary-green', className)}
     />
   );
 };
@@ -78,9 +75,9 @@ export const LossConditions = ({ className }: { className?: ClassName }) => {
   const { lossConditions } = useBlackjackGame();
   return (
     <DisplayConditions
-      title='House wins if'
+      title='to lose'
       conditions={lossConditions}
-      className={className}
+      className={cn('text-primary-red', className)}
       rightJustify
     />
   );

@@ -1,6 +1,3 @@
-import { useMemo, useState } from 'react';
-
-import { GamePhase } from '@/lib/evaluateHand';
 import { cn } from '@/lib/utils';
 
 import { Hand } from '@/components/blackjack/Hand';
@@ -9,40 +6,19 @@ import {
   StartOverlay,
   WinOverlay,
 } from '@/components/blackjack/overlays';
+import { PlayerActions } from '@/components/blackjack/PlayerActions';
 import { TableRules } from '@/components/blackjack/TableRules';
 import {
   LossConditions,
   WinConditions,
 } from '@/components/blackjack/WinLossConditions';
-import TableButton from '@/components/buttons/TableButton';
 
 import backgroundImage from '@/assets/images/felt720.png';
 import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
+import { ModalProvider } from '@/components/AnimatedModal';
 
 export const BlackjackTable = () => {
-  const {
-    gamePhase: handState,
-    startGame,
-    stand,
-    hit,
-    playerCards,
-    houseCards,
-  } = useBlackjackGame();
-
-  const [playerCanAct, setPlayerCanAct] = useState(false);
-
-  const displayStartOverlay = useMemo(
-    () => handState === GamePhase.INITIAL,
-    [handState]
-  );
-  const displayWinOverlay = useMemo(
-    () => handState === GamePhase.WON,
-    [handState]
-  );
-  const displayLossOverlay = useMemo(
-    () => handState === GamePhase.LOST,
-    [handState]
-  );
+  const { playerCards, houseCards } = useBlackjackGame();
 
   return (
     <main
@@ -58,28 +34,23 @@ export const BlackjackTable = () => {
         </section>
         <TableRules />
         <section className='size-full flex flex-col gap-10 items-center flex-1'>
-          <Hand
-            className='flex-1'
-            cards={playerCards}
-            setReadyForAction={setPlayerCanAct}
-          />
-          <div className='flex gap-8'>
-            <TableButton disabled={!playerCanAct} onClick={hit}>
-              Hit
-            </TableButton>
-            <TableButton disabled={!playerCanAct} onClick={stand}>
-              Stand
-            </TableButton>
-          </div>
+          <Hand className='flex-1' cards={playerCards} />
+          <PlayerActions />
         </section>
       </div>
       <div
         className='absolute inset-0 bg-repeat opacity-90 mix-blend-multiply z-[1]'
         style={{ backgroundImage: `url(${backgroundImage.src})` }}
       />
-      <StartOverlay enabled={displayStartOverlay} onClose={startGame} />
-      <LossOverlay enabled={displayLossOverlay} onClose={startGame} />
-      <WinOverlay enabled={displayWinOverlay} onClose={startGame} />
+      <ModalProvider>
+        <StartOverlay />
+      </ModalProvider>
+      <ModalProvider>
+        <WinOverlay />
+      </ModalProvider>
+      <ModalProvider>
+        <LossOverlay />
+      </ModalProvider>
     </main>
   );
 };

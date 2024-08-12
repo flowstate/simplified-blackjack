@@ -22,9 +22,11 @@ export const TableRules = () => {
         <div className='flex gap-4 items-center text-4xl font-display  font-semibold'>
           {rules.map((rule, index) => (
             <Fragment key={index}>
-              <h3 key={index}>{rule}</h3>
+              <h3 className='text-white/80' key={index}>
+                {rule}
+              </h3>
               {index !== rules.length - 1 && (
-                <SpadeChip className='size-6 text-foreground' />
+                <SpadeChip className='size-6 opacity-60 text-foreground' />
               )}
             </Fragment>
           ))}

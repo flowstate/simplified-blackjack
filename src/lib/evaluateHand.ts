@@ -5,10 +5,10 @@ import { ConditionState, GameCondition } from '@/constant/conditions';
 
 // TODO: move to constants?
 export enum GamePhase {
-  INITIAL,
-  ACTIVE,
-  WON,
-  LOST,
+  INITIAL = 'initial',
+  ACTIVE = 'active',
+  WON = 'won',
+  LOST = 'lost',
 }
 
 export interface GamePhaseProps {

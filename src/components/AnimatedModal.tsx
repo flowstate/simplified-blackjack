@@ -65,9 +65,11 @@ export const ModalTrigger = ({
 export const ModalBody = ({
   children,
   className,
+  onOutsideClick,
 }: {
   children: ReactNode;
   className?: string;
+  onOutsideClick?: () => void;
 }) => {
   const { open } = useModal();
 
@@ -81,7 +83,10 @@ export const ModalBody = ({
 
   const modalRef = useRef(null);
   const { setOpen } = useModal();
-  useOutsideClick({ ref: modalRef, callback: () => setOpen(false) });
+  useOutsideClick({
+    ref: modalRef,
+    callback: () => onOutsideClick?.() || setOpen(false),
+  });
 
   return (
     <AnimatePresence>
@@ -105,7 +110,7 @@ export const ModalBody = ({
           <motion.div
             ref={modalRef}
             className={cn(
-              'min-h-[50%] max-h-[90%] md:max-w-[40%] bg-neutral-950 dark:border-neutral-800 md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden',
+              ' md:max-w-[60%] bg-neutral-950 dark:border-neutral-800 md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden',
               className
             )}
             initial={{
@@ -131,7 +136,6 @@ export const ModalBody = ({
               damping: 15,
             }}
           >
-            <CloseIcon />
             {children}
           </motion.div>
         </motion.div>

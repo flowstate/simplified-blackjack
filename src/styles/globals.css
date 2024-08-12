@@ -9,6 +9,10 @@
     #20232b 70%
   );
   --gold: #f6c05c;
+  --primary-orange: #e1a24f;
+  --primary-green: #66d29e;
+  --primary-blue: #537fd8;
+  --primary-red: #dc4673;
 }
 
 @layer base {

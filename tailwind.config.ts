@@ -10,6 +10,12 @@ export default {
       },
       colors: {
         foreground: 'var(--gold)',
+        primary: {
+          orange: 'var(--primary-orange)',
+          green: 'var(--primary-green)',
+          blue: 'var(--primary-blue)',
+          red: 'var(--primary-red)',
+        },
       },
       keyframes: {
         glow: {
