@@ -1,11 +1,14 @@
+import { useEffect } from 'react';
+
+import { GamePhase } from '@/lib/evaluator/evaluateHand';
+
 import {
   ModalBody,
   ModalContent,
   useModal,
 } from '@/components/blackjack/overlays/AnimatedModal';
+
 import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
-import { GamePhase } from '@/lib/evaluator/evaluateHand';
-import { useEffect } from 'react';
 
 export const StartOverlay = () => {
   const { startGame, gamePhase } = useBlackjackGame();
@@ -17,7 +20,7 @@ export const StartOverlay = () => {
       return;
     }
     setOpen(false);
-  }, [gamePhase]);
+  }, [gamePhase, setOpen]);
 
   return (
     <ModalBody onOutsideClick={startGame}>

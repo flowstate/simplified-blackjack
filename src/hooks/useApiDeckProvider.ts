@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
 
+import { Card } from '@/lib/cards/cards.types';
 import {
   DiscardPileResponse,
   DrawCardsResponse,
   NewDeckResponse,
 } from '@/lib/deck/apiDeck';
-import { Card } from '@/lib/cards/cards.types';
 import { DeckProvider } from '@/lib/deckProvider/deckProvider';
 
 export const useApiDeckProvider = (): DeckProvider => {

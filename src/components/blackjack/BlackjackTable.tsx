@@ -6,6 +6,7 @@ import {
   StartOverlay,
   WinOverlay,
 } from '@/components/blackjack/overlays';
+import { ModalProvider } from '@/components/blackjack/overlays/AnimatedModal';
 import { PlayerActions } from '@/components/blackjack/PlayerActions';
 import { TableRules } from '@/components/blackjack/TableRules';
 import {
@@ -14,7 +15,6 @@ import {
 } from '@/components/blackjack/WinLossConditions';
 
 import backgroundImage from '@/assets/images/felt720.png';
-import { ModalProvider } from '@/components/blackjack/overlays/AnimatedModal';
 
 export const BlackjackTable = () => {
   return (

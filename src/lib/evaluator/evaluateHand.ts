@@ -1,6 +1,6 @@
-import { GameCondition, ConditionState } from '@/lib/conditions';
 import { Card } from '@/lib/cards/cards.types';
 import { calculateHandScore } from '@/lib/cards/helpers';
+import { ConditionState, GameCondition } from '@/lib/conditions';
 
 // TODO: move to constants?
 export enum GamePhase {

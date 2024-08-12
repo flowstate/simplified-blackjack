@@ -43,7 +43,6 @@ module.exports = {
     'simple-import-sort/imports': [
       'warn',
       {
-        newlinesBetweenGroups: 'never',
         groups: [
           // ext library & side effect imports
           ['^@?\\w', '^\\u0000'],

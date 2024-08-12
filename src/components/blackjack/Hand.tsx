@@ -4,15 +4,15 @@ import {
   motion,
   Variants,
 } from 'framer-motion';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import { calculateHandScore } from '@/lib/cards/helpers';
+import { GamePhase } from '@/lib/evaluator/evaluateHand';
 import { ClassName, cn } from '@/lib/utils';
 
 import { DisplayCard } from '@/components/blackjack/Cards';
 
 import { HandState, useBlackjackGame } from '@/contexts/BlackjackGameContext';
-import { calculateHandScore } from '@/lib/cards/helpers';
-import { GamePhase } from '@/lib/evaluator/evaluateHand';
 
 interface HandProps {
   isHouse?: boolean;

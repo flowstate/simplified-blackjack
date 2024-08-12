@@ -1,9 +1,10 @@
 import { ConditionState } from '@/lib/conditions';
 import {
+  buildHouseBusts,
   buildPlayerBlackjack,
   buildStandAboveHouse,
-  buildHouseBusts,
 } from '@/lib/conditions/winConditions';
+
 import {
   buildHouseBlackjack,
   buildPlayerBusts,

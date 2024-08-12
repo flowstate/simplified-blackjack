@@ -1,13 +1,16 @@
+import { useEffect, useMemo } from 'react';
+
+import { ConditionState } from '@/lib/conditions';
+import { GamePhase } from '@/lib/evaluator/evaluateHand';
+
 import {
   ModalBody,
   ModalContent,
   useModal,
 } from '@/components/blackjack/overlays/AnimatedModal';
 import { ConditionItem } from '@/components/blackjack/WinLossConditions';
-import { ConditionState } from '@/lib/conditions';
+
 import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
-import { GamePhase } from '@/lib/evaluator/evaluateHand';
-import { useEffect, useMemo } from 'react';
 
 export const LossOverlay = () => {
   const { startGame, gamePhase, lossConditions } = useBlackjackGame();
@@ -19,7 +22,7 @@ export const LossOverlay = () => {
       return;
     }
     setOpen(false);
-  }, [gamePhase]);
+  }, [gamePhase, setOpen]);
 
   const losingCondition = useMemo(() => {
     if (!open) return;

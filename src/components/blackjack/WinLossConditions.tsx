@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
-
-import { ClassName, cn } from '@/lib/utils';
+import { useMemo } from 'react';
 
 import { ConditionState, GameCondition } from '@/lib/conditions';
-import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
-import { useMemo } from 'react';
 import { GamePhase } from '@/lib/evaluator/evaluateHand';
+import { ClassName, cn } from '@/lib/utils';
+
+import { useBlackjackGame } from '@/contexts/BlackjackGameContext';
 
 interface ConditionItemProps {
   condition: GameCondition;
@@ -46,7 +46,7 @@ const DisplayConditions = ({
             (condition) => condition.getState() !== ConditionState.MET
           )
         : conditions,
-    [conditions]
+    [conditions, gamePhase]
   );
   return (
     <div

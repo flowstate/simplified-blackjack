@@ -7,24 +7,23 @@ import {
   useState,
 } from 'react';
 
+import { Card } from '@/lib/cards/cards.types';
+import {
+  buildHouseBlackjack,
+  buildHouseBusts,
+  buildPlayerBlackjack,
+  buildPlayerBusts,
+  buildStandAboveHouse,
+  buildStandBelowHouse,
+  buildStandOnTie,
+  GameCondition,
+} from '@/lib/conditions';
 import { DeckProvider } from '@/lib/deckProvider/deckProvider';
 import {
   buildGamePhaseEvaluator,
-  GamePhase,
   EvaluateGamePhaseProps,
+  GamePhase,
 } from '@/lib/evaluator/evaluateHand';
-
-import {
-  GameCondition,
-  buildStandBelowHouse,
-  buildHouseBlackjack,
-  buildStandOnTie,
-  buildPlayerBusts,
-  buildStandAboveHouse,
-  buildPlayerBlackjack,
-  buildHouseBusts,
-} from '@/lib/conditions';
-import { Card } from '@/lib/cards/cards.types';
 export enum HandState {
   STARTING = 'starting',
   CLEARING = 'clearing',

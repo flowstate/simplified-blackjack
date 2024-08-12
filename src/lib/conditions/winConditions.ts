@@ -1,9 +1,9 @@
 import {
-  ConditionType,
   ConditionInput,
   ConditionState,
-  GameCondition,
+  ConditionType,
   createGameCondition,
+  GameCondition,
 } from '@/lib/conditions';
 
 export const buildStandAboveHouse = (): GameCondition => {
